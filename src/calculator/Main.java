@@ -1,23 +1,29 @@
 package calculator;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
-import java.util.Scanner;
 
-public class Calc {
-    public static void main(String[] args) throws Exception {
+public class Main {
+    public static void main(String[] args) throws IOException {
         System.out.println("Калькулятор к работе готов.Все введенные числа могут быть только в одной системе исчисления,римской либо арабской." +
                 "Введите первое число(от 1 до 10 включительно),далее, через пробел, операцию('/' или '*' или '-' или '+') , и также через пробел" +
                 " -второе число(от 1 до 10 включительно)");
         BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+        String input = buffer.readLine();
+        calc(input);
+    }
+
+    public static String calc(String input) {
         int result = 0;
-        String resultFin = null;
         String[] substr;
-        //boolean latin = true;
         try {
-            String line = buffer.readLine();
-            substr = line.split(" ");
+
+            substr = input.split(" ");
+            if (substr.length > 3)
+                throw new Exception("Некорректное введение операндов");
+
             int operand1 = 0;
             int operand2 = 0;
             if (Objects.equals(substr[0], "I") || Objects.equals(substr[0], "II") || Objects.equals(substr[0], "III") || Objects.equals(substr[0],
@@ -56,20 +62,18 @@ public class Calc {
             String operator = substr[1];
 
             if (operand1 > 10 || operand1 < 1 || operand2 > 10 || operand2 < 1)
-                throw new Exception("Введенное число или числа выходят за пределы допустимого интервала от 1 до 10");
-
-            switch (operator) {
-                case "/" -> result = operand1 / operand2;
-                case "*" -> result = operand1 * operand2;
-                case "-" -> result = operand1 - operand2;
-                case "+" -> result = operand1 + operand2;
-            }
-
+                throw new Exception("Введенное число или числа выходят за пределы допустимого интервала от 1 до 10 ");
+            result = switch (operator) {
+                case "+" -> operand1 + operand2;
+                case "*" -> operand1 * operand2;
+                case "-" -> operand1 - operand2;
+                case "/" -> operand1 / operand2;
+                default -> throw new Exception("Некорректный оператор");
+            };
             if (Objects.equals(substr[0], "I") || Objects.equals(substr[0], "II") || Objects.equals(substr[0], "III") || Objects.equals(substr[0],
                     "IV") || Objects.equals(substr[0], "V") || Objects.equals(substr[0], "VI") || Objects.equals(substr[0], "VII") ||
                     Objects.equals(substr[0], "VIII") || Objects.equals(substr[0], "IX") || Objects.equals(substr[0], "X")) {
                 System.out.println(RomanNumber.toRoman(Integer.parseInt(String.valueOf(result))));
-                ;
             } else {
                 System.out.println(result);
             }
@@ -78,5 +82,7 @@ public class Calc {
                     "либо только римскими цифрами:" + e.getMessage());
             e.printStackTrace();
         }
+        return String.valueOf(result);
     }
 }
+
